@@ -15,6 +15,7 @@ class WordStore {
     private var wordService = WordService()
     var loading: Loading = .na
     var words: [WordModel] = []
+    var searchWord: String = ""
 
     func fetchWords(_ word: String) async {
         do {
@@ -23,6 +24,7 @@ class WordStore {
             if let response = response as? HTTPURLResponse {
                 if response.statusCode == 200 {
                     self.words = words
+                    debugLog("Words fetched successfully: \(words)")
                 } else {
                     throw NSError(domain: "Invalid response", code: response.statusCode)
                 }

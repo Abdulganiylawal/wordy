@@ -10,20 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     var body: some View {
-        AdaptiveNavBar {
-            HStack{
-                Text("Testing")
-                Spacer()
-            }
-        } content: {
-            VStack {
-                
-            }
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity,maxHeight: .infinity)
-            .background(AppColors.background(colorScheme: colorScheme))
-        }
-       
+        WordView()
     }
 }
 

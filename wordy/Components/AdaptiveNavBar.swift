@@ -44,7 +44,7 @@ struct AdaptiveNavBar<Content: View, ToolbarContent: View>: View {
                         .padding(.horizontal)
                       
                         .background(
-                            BlurredTopBackgroundView(height: 50, blurRadius: Tokens.backgroundBlur)
+                            BlurredTopBackgroundView(height: 90, blurRadius: Tokens.backgroundBlur)
                         )
                         
                     }

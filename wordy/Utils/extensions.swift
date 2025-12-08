@@ -1,4 +1,37 @@
 import Foundation
+import SwiftUI
+
+extension View {
+    @ViewBuilder
+    func modifier<Content: View>(if condition: Bool, animation: Animation = .default, modify: (Self) -> Content) -> some View {
+        Group {
+            if condition {
+                modify(self)
+            } else {
+                self
+            }
+        }
+        .animation(animation, value: condition)
+    }
+
+
+    func placeholder<Content: View>(
+        when shouldShow: Bool,
+        alignment: Alignment = .leading,
+        @ViewBuilder placeholder: () -> Content
+    ) -> some View {
+        ZStack(alignment: alignment) {
+            if shouldShow {
+                placeholder()
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.25), value: shouldShow)
+            }
+            self
+        }
+    }
+}
+
+
 
 extension JSONDecoder {
     /// Decodes with detailed error logging for all `DecodingError` cases.
