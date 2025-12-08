@@ -1,0 +1,24 @@
+PODS:
+  - GRDB.swift (7.8.0):
+    - GRDB.swift/standard (= 7.8.0)
+  - GRDB.swift/standard (7.8.0)
+
+DEPENDENCIES:
+  - GRDB.swift (from `https://github.com/groue/GRDB.swift.git`, branch `GRDB7`)
+
+EXTERNAL SOURCES:
+  GRDB.swift:
+    :branch: GRDB7
+    :git: https://github.com/groue/GRDB.swift.git
+
+CHECKOUT OPTIONS:
+  GRDB.swift:
+    :commit: 18497b68fdbb3a09528d260a0a0e1e7e61c8c53d
+    :git: https://github.com/groue/GRDB.swift.git
+
+SPEC CHECKSUMS:
+  GRDB.swift: 682e07f771a9100f0bdf40fd0bed57b83ca08e29
+
+PODFILE CHECKSUM: 0ba6a2581c619cb18c448f95257c69e7d346d444
+
+COCOAPODS: 1.16.2
