@@ -8,14 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.colorScheme) var colorScheme
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        AdaptiveNavBar {
+            HStack{
+                Text("Testing")
+                Spacer()
+            }
+        } content: {
+            VStack {
+                
+            }
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity,maxHeight: .infinity)
+            .background(AppColors.background(colorScheme: colorScheme))
         }
-        .padding()
+       
     }
 }
 
