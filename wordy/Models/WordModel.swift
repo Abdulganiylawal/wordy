@@ -1,6 +1,8 @@
 
 import Foundation
-struct WordModel : Codable {
+
+struct WordModel : Codable, Identifiable,Equatable {
+	let id: UUID = UUID()
 	let word : String?
 	let phonetic : String?
 	let phonetics : [Phonetics]?

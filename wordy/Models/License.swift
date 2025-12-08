@@ -1,7 +1,7 @@
 
 
 import Foundation
-struct License : Codable {
+struct License : Codable,Equatable {
 	let name : String?
 	let url : String?
 

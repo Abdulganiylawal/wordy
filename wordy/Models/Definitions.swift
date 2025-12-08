@@ -1,7 +1,7 @@
 
 
 import Foundation
-struct Definitions : Codable {
+struct Definitions : Codable,Equatable {
 	let definition : String?
 	let synonyms : [String]?
 	let antonyms : [String]?

@@ -1,7 +1,7 @@
 
 
 import Foundation
-struct Phonetics : Codable {
+struct Phonetics : Codable,Equatable {
 	let text : String?
 	let audio : String?
 	let sourceUrl : String?
