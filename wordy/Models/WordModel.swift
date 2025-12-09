@@ -11,12 +11,14 @@ import GRDB
 
 struct AIDictionaryModel: Codable, Equatable {
     let definition: String
+    let typeOfWord: String
     let synonyms: [String]
     let antonyms: [String]
     let example: [String]
 
     enum CodingKeys: String, CodingKey {
         case definition = "definition"
+        case typeOfWord = "typeOfWord"
         case synonyms = "synonyms"
         case antonyms = "antonyms"
         case example = "example"
@@ -25,6 +27,7 @@ struct AIDictionaryModel: Codable, Equatable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         definition = try values.decode(String.self, forKey: .definition)
+        typeOfWord = try values.decode(String.self, forKey: .typeOfWord)
         synonyms = try values.decode([String].self, forKey: .synonyms)
         antonyms = try values.decode([String].self, forKey: .antonyms)
         example = try values.decode([String].self, forKey: .example)
@@ -32,7 +35,7 @@ struct AIDictionaryModel: Codable, Equatable {
 }
 
 struct MeaningModel: Codable, Equatable{
-
+   
     let partOfSpeech: String?
     let phonetics: [Phonetics]?
     let definitions: AIDictionaryModel
@@ -82,6 +85,7 @@ struct MeaningModel: Codable, Equatable{
         
         return LocalMeaningModel(
             id: nil,
+      
             partOfSpeech: meaning.partOfSpeech ?? "",
             phonetics: phoneticsString,
             definitions: definitionsString

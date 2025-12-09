@@ -78,6 +78,10 @@ class WordService {
                     "type": "string",
                     "description": "A clear definition of the word.",
                 ],
+                "typeOfWord": [
+                    "type": "string",
+                    "description": "The type of word (noun, verb, adjective, adverb, etc.).",
+                ],
                 "synonyms": [
                     "type": "array",
                     "items": [
@@ -101,7 +105,7 @@ class WordService {
                         "A list of example sentences showing how the word is used.",
                 ],
             ],
-            "required": ["definition", "synonyms", "antonyms", "example"],
+            "required": ["definition", "synonyms", "antonyms", "example", "typeOfWord"],
             "additionalProperties": false,
         ]
         

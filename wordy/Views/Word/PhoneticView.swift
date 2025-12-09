@@ -10,18 +10,19 @@ import AVFoundation
 
 struct PhoneticView: View {
     var phonetic: Phonetics?
-    
+    var typeOfWord:String
     var sourceUrl:String?
     var text:String
     @Environment(\.colorScheme) var colorScheme
     @State private var audioPlayer: AVPlayer?
     @State private var isPlaying = false
     @State private var observer: NSObjectProtocol?
-    init( phonetics: [Phonetics]) {
+    init( phonetics: [Phonetics], typeOfWord:String) {
         let phonetic = phonetics.compactMap { $0 }.first
         self.phonetic =  phonetic
         self.text = phonetic?.text ?? ""
         self.sourceUrl = phonetic?.audio ?? ""
+        self.typeOfWord = typeOfWord
     }
     
     var body: some View {
@@ -48,6 +49,7 @@ struct PhoneticView: View {
                         .buttonStyle(BouncyButton())
                     }
                 }
+                .padding(.horizontal, 20)
             }
             .onDisappear {
                 audioPlayer?.pause()
@@ -93,5 +95,5 @@ struct PhoneticView: View {
 }
 
 #Preview {
-    PhoneticView(phonetics: [])
+    PhoneticView(phonetics: [], typeOfWord: "")
 }

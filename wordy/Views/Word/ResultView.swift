@@ -13,9 +13,17 @@ struct ResultView: View {
     var word: MeaningModel
     @State private var onAppear: Bool = false
     var body: some View {
-        LazyVStack(alignment: .leading,spacing: 0) {
+        LazyVStack(alignment: .leading,spacing: 10) {
+            
+            PhoneticView(phonetics: word.phonetics ?? [], typeOfWord: word.definitions.typeOfWord)
 
-            PhoneticView(phonetics: word.phonetics ?? [])
+            DefinationView(definition: word.definitions.definition)
+            
+            SynonymView(synonyms: word.definitions.synonyms)
+            
+            AntonymView(antonyms: word.definitions.antonyms)
+            
+            ExampleView(examples: word.definitions.example)
                 
         }
         .padding(.horizontal)
