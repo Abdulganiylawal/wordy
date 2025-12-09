@@ -33,7 +33,7 @@ struct CircularButton: View {
                 .clipShape(Circle())
                 .contentShape(Rectangle())
         }
-        .hapticFeedback(style: .light)
+        .hapticFeedback(style: .soft)
         .buttonStyle(BouncyButton())
         .scaleEffect(onAppear ? 1 : 0.1)
         .opacity(onAppear ? 1 : 0)

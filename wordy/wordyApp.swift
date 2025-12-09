@@ -22,8 +22,28 @@ struct wordyApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(.shared)
                 .environment(KeyboardManager())
+                .appDatabase(.shared)
         }
+    }
+}
+
+
+
+private struct AppDatabaseKey: EnvironmentKey {
+    static let defaultValue: AppDatabase? = nil
+}
+
+extension EnvironmentValues {
+    var appDatabase: AppDatabase? {
+        get { self[AppDatabaseKey.self] }
+        set { self[AppDatabaseKey.self] = newValue }
+    }
+}
+
+extension View {
+    func appDatabase(_ appDatabase: AppDatabase) -> some View {
+        environment(\.appDatabase, appDatabase)
     }
 }

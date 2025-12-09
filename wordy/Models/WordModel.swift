@@ -6,9 +6,8 @@
 //
 
 
-
-
 import Foundation
+import GRDB
 
 struct AIDictionaryModel: Codable, Equatable {
     let definition: String
@@ -32,18 +31,23 @@ struct AIDictionaryModel: Codable, Equatable {
     }
 }
 
-struct MeaningModel: Codable, Equatable {
+struct MeaningModel: Codable, Equatable{
+
     let partOfSpeech: String?
     let phonetics: [Phonetics]?
     let definitions: AIDictionaryModel
 
     enum CodingKeys: String, CodingKey {
+      
         case partOfSpeech = "partOfSpeech"
         case phonetics = "phonetics"
         case definitions = "definitions"
     }
+ 
+    
 
-    init(partOfSpeech: String?, phonetics: [Phonetics]?, definitions: AIDictionaryModel) {
+    init( partOfSpeech: String?, phonetics: [Phonetics]?, definitions: AIDictionaryModel) {
+   
         self.partOfSpeech = partOfSpeech
         self.phonetics = phonetics
         self.definitions = definitions
@@ -51,8 +55,39 @@ struct MeaningModel: Codable, Equatable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
+      
         partOfSpeech = try values.decodeIfPresent(String.self, forKey: .partOfSpeech)
         phonetics = try values.decodeIfPresent([Phonetics].self, forKey: .phonetics)
         definitions = try values.decode(AIDictionaryModel.self, forKey: .definitions)
     }
+    
+  
+    static func toLocalMeaningModel(meaning: MeaningModel) throws -> LocalMeaningModel {
+        // Encode phonetics array to JSON string
+        let phoneticsString: String
+        if let phonetics = meaning.phonetics {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.sortedKeys]
+            let phoneticsData = try encoder.encode(phonetics)
+            phoneticsString = String(data: phoneticsData, encoding: .utf8) ?? "[]"
+        } else {
+            phoneticsString = "[]"
+        }
+        
+        // Encode definitions model to JSON string
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let definitionsData = try encoder.encode(meaning.definitions)
+        let definitionsString = String(data: definitionsData, encoding: .utf8) ?? "{}"
+        
+        return LocalMeaningModel(
+            id: nil,
+            partOfSpeech: meaning.partOfSpeech ?? "",
+            phonetics: phoneticsString,
+            definitions: definitionsString
+        )
+    }
+   
 }
+
+

@@ -141,7 +141,7 @@ class WordService {
                 )
             }
             
-            debugLog("Raw response: \(jsonString)")
+//            debugLog("Raw response: \(jsonString)")
             
             
             let dictionaryModel = try decodeJSON(jsonString, to: AIDictionaryModel.self)

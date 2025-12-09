@@ -19,17 +19,20 @@ class WordStore {
     var searchWord: String = ""
 
 
-    func getWordMeaning(_ word: String) async {
+    func getWordMeaning(_ word: String) async -> MeaningModel? {
         do {
             updateLoading(status: .loading)
             let (fromDic, fromAi) = try await wordService.getMeaning(word)
-            words = MeaningModel(partOfSpeech: fromDic.first?.phonetic, phonetics: fromDic.first?.phonetics, definitions: fromAi)
+            let foundPhonetics = fromDic.first?.phonetics?.compactMap { $0.audio != nil ? $0 : nil }
+            words = MeaningModel(partOfSpeech: fromDic.first?.phonetic, phonetics: foundPhonetics, definitions: fromAi)
             debugLog(words)
             updateLoading(status: .finished)
+            return words
         } catch {
             updateLoading(status: .failed)
             debugLog("Error getting word meaning: \(error)")
         }
+        return nil
     }
 }
 

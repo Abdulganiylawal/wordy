@@ -11,6 +11,7 @@ import SwiftUI
 
 struct WordView: View {
     @State private var wordStore = WordStore()
+    @Environment(DbStore.self) var dbStore
     @State private var isLoading: Bool = false
     @Environment(\.colorScheme) var colorScheme
     @Environment(KeyboardManager.self) var keyboardManager
@@ -154,7 +155,14 @@ struct WordView: View {
     private var searchButton: some View {
         CircularButton(icon: "magnifyingglass", buttonColor: .blue, useButtonColor: true) {
             Task {
-                await wordStore.getWordMeaning(wordStore.searchWord)
+               if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
+                do {
+                    let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
+                    await dbStore.saveMeaning(localMeaning)
+                } catch {
+                    debugLog("Error converting meaning to local meaning: \(error.localizedDescription)")
+                }
+               }
             }
         }
         .opacity(keyboardManager.isKeyboardVisible ? 0 : 1)
