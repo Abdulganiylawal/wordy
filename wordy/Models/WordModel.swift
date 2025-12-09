@@ -1,33 +1,58 @@
+//
+//  WordModel.swift
+//  wordy
+//
+//  Created by ABDULGANIY LAWAL on 09/12/2025.
+//
+
+
+
 
 import Foundation
 
-struct WordModel : Codable, Identifiable,Equatable {
-	let id: UUID = UUID()
-	let word : String?
-	let phonetic : String?
-	let phonetics : [Phonetics]?
-	let meanings : [Meanings]?
-	let license : License?
-	let sourceUrls : [String]?
+struct AIDictionaryModel: Codable, Equatable {
+    let definition: String
+    let synonyms: [String]
+    let antonyms: [String]
+    let example: [String]
 
-	enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
+        case definition = "definition"
+        case synonyms = "synonyms"
+        case antonyms = "antonyms"
+        case example = "example"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        definition = try values.decode(String.self, forKey: .definition)
+        synonyms = try values.decode([String].self, forKey: .synonyms)
+        antonyms = try values.decode([String].self, forKey: .antonyms)
+        example = try values.decode([String].self, forKey: .example)
+    }
+}
 
-		case word = "word"
-		case phonetic = "phonetic"
-		case phonetics = "phonetics"
-		case meanings = "meanings"
-		case license = "license"
-		case sourceUrls = "sourceUrls"
-	}
+struct MeaningModel: Codable, Equatable {
+    let partOfSpeech: String?
+    let phonetics: [Phonetics]?
+    let definitions: AIDictionaryModel
 
-	init(from decoder: Decoder) throws {
-		let values = try decoder.container(keyedBy: CodingKeys.self)
-		word = try values.decodeIfPresent(String.self, forKey: .word)
-		phonetic = try values.decodeIfPresent(String.self, forKey: .phonetic)
-		phonetics = try values.decodeIfPresent([Phonetics].self, forKey: .phonetics)
-		meanings = try values.decodeIfPresent([Meanings].self, forKey: .meanings)
-		license = try values.decodeIfPresent(License.self, forKey: .license)
-		sourceUrls = try values.decodeIfPresent([String].self, forKey: .sourceUrls)
-	}
+    enum CodingKeys: String, CodingKey {
+        case partOfSpeech = "partOfSpeech"
+        case phonetics = "phonetics"
+        case definitions = "definitions"
+    }
 
+    init(partOfSpeech: String?, phonetics: [Phonetics]?, definitions: AIDictionaryModel) {
+        self.partOfSpeech = partOfSpeech
+        self.phonetics = phonetics
+        self.definitions = definitions
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        partOfSpeech = try values.decodeIfPresent(String.self, forKey: .partOfSpeech)
+        phonetics = try values.decodeIfPresent([Phonetics].self, forKey: .phonetics)
+        definitions = try values.decode(AIDictionaryModel.self, forKey: .definitions)
+    }
 }

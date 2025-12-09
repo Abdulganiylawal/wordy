@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		763E5CEF2EE8A208005EB24C /* AIProxy in Frameworks */ = {isa = PBXBuildFile; productRef = 763E5CEE2EE8A208005EB24C /* AIProxy */; };
 		D1A371DBC054FEE7814D11A5 /* Pods_wordy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D679ADD2BFCEBFC0D3D72F0 /* Pods_wordy.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1A371DBC054FEE7814D11A5 /* Pods_wordy.framework in Frameworks */,
+				763E5CEF2EE8A208005EB24C /* AIProxy in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,6 +123,9 @@
 			);
 			mainGroup = 76477D0D2EE71C6E0010A51E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				763E5CED2EE8A208005EB24C /* XCRemoteSwiftPackageReference "AIProxySwift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 76477D172EE71C6F0010A51E /* Products */;
 			projectDirPath = "";
@@ -327,6 +332,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X84MQ7N5KN;
@@ -342,8 +348,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ladulghanneey.wordy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ladulghanneey.words;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -360,6 +367,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X84MQ7N5KN;
@@ -375,8 +383,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ladulghanneey.wordy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ladulghanneey.words;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -409,6 +418,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		763E5CED2EE8A208005EB24C /* XCRemoteSwiftPackageReference "AIProxySwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lzell/AIProxySwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.134.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		763E5CEE2EE8A208005EB24C /* AIProxy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 763E5CED2EE8A208005EB24C /* XCRemoteSwiftPackageReference "AIProxySwift" */;
+			productName = AIProxy;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 76477D0E2EE71C6E0010A51E /* Project object */;
 }

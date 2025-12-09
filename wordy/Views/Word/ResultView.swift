@@ -10,17 +10,13 @@ import SwiftUI
 struct ResultView: View {
     @Bindable var wordStore:WordStore
     @Environment(\.colorScheme) var colorScheme
-    var word: WordModel
+    var word: MeaningModel
     @State private var onAppear: Bool = false
     var body: some View {
         LazyVStack(alignment: .leading,spacing: 0) {
 
-                PhoneticView(phonetics: word.phonetics ?? [])
+            PhoneticView(phonetics: word.phonetics ?? [])
                 
-                
-            
-         
-            
         }
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity,alignment: .top)

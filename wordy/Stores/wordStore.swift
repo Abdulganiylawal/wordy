@@ -15,31 +15,21 @@ class WordStore {
     private var wordService = WordService()
     var loading: Loading = .na
     var partOfSpeech: String = ""
-    var words: [WordModel] = []
+    var words: MeaningModel?
     var searchWord: String = ""
 
-    func fetchWords(_ word: String) async {
+
+    func getWordMeaning(_ word: String) async {
         do {
             updateLoading(status: .loading)
-            let (words, response) = try await wordService.getWords(word)
-            if let response = response as? HTTPURLResponse {
-                if response.statusCode == 200 {
-                    self.words = words
-                    debugLog(words)
-                } else {
-                    throw NSError(domain: "Invalid response", code: response.statusCode)
-                }
-            }
+            let (fromDic, fromAi) = try await wordService.getMeaning(word)
+            words = MeaningModel(partOfSpeech: fromDic.first?.phonetic, phonetics: fromDic.first?.phonetics, definitions: fromAi)
+            debugLog(words)
             updateLoading(status: .finished)
         } catch {
             updateLoading(status: .failed)
-            debugLog("Error fetching words: \(error)")
+            debugLog("Error getting word meaning: \(error)")
         }
-    }
-
-
-    func analyzeResponse(_ words: [WordModel]) {
-      
     }
 }
 

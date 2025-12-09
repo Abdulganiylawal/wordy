@@ -36,60 +36,29 @@ struct WordView: View {
                     bottomBarContent
                 }
                 .onChange(of: wordStore.words) { oldValue, newValue in
-                    handleWordsChange(oldValue: oldValue, newValue: newValue)
+                    handleWordsChange( newValue: newValue)
                 }
                 .onChange(of: wordStore.loading) {
                     handleLoadingChange()
                 }
-                .onChange(of: wordStore.words.count) { oldValue, newValue in
-                    handleWordsCountChange(oldValue: oldValue, newValue: newValue)
-                }
+               
         }
     }
     
     @ViewBuilder
     private func mainContentView(geometry: GeometryProxy) -> some View {
         ScrollView {
-            if showNextView {
-                horizontalScrollView(geometry: geometry)
+            if showNextView && wordStore.words != nil {
+                ResultView(wordStore: wordStore, word: wordStore.words!)
+                    .padding(.top,20)
+                    .padding(.bottom,80)
             }
         }
         .scrollIndicators(.hidden)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
-    @ViewBuilder
-    private func horizontalScrollView(geometry: GeometryProxy) -> some View {
-        ScrollView(.horizontal) {
-            LazyHStack(spacing: 0) {
-                ForEach(Array(wordStore.words.enumerated()), id: \.element.id) { index, word in
-                    ResultView(wordStore: wordStore, word: word)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .id(index)
-                }
-            }
-            .padding(.top, 20)
-            .padding(.bottom, 100)
-            .scrollTargetLayout()
-        }
-        .scrollIndicators(.hidden)
-        .scrollPosition(id: $scrollPosition)
-        .scrollTargetBehavior(.paging)
-        .onChange(of: scrollPosition) { oldValue, newValue in
-            if let newValue = newValue {
-                withAnimation(.easeInOut) {
-                    currentPageIndex = newValue
-                }
-            }
-        }
-        .onAppear {
-            if scrollPosition == nil && showNextView {
-                scrollPosition = 0
-            }
-        }
-        .transition(.blurReplace)
-        .animation(.easeInOut, value: showNextView)
-    }
+    
     
     @ViewBuilder
     private var topBarContent: some View {
@@ -101,7 +70,7 @@ struct WordView: View {
                         color: AppColors.textInverted(colorScheme: colorScheme),
                         size: 28,
                         weight: .bold,
-                        subscriptWord: " \(currentPageIndex + 1)/\(wordStore.words.count)"
+                        subscriptWord: ""
                     )
                     
                   
@@ -124,7 +93,7 @@ struct WordView: View {
     private var closeButton: some View {
         CircularButton(icon: "xmark") {
             withAnimation {
-                wordStore.words = []
+                wordStore.words = nil
                 showNextView = false
                 blurView = false
                 scrollPosition = nil
@@ -176,8 +145,6 @@ struct WordView: View {
             if !showNextView {
                 Spacer()
                 searchButton
-            } else {
-                pageIndicators
             }
         }
         .padding(.horizontal)
@@ -187,27 +154,16 @@ struct WordView: View {
     private var searchButton: some View {
         CircularButton(icon: "magnifyingglass", buttonColor: .blue, useButtonColor: true) {
             Task {
-                await wordStore.fetchWords(wordStore.searchWord)
+                await wordStore.getWordMeaning(wordStore.searchWord)
             }
         }
         .opacity(keyboardManager.isKeyboardVisible ? 0 : 1)
         .animation(.easeInOut, value: keyboardManager.isKeyboardVisible)
     }
+  
     
-    @ViewBuilder
-    private var pageIndicators: some View {
-        ForEach(0..<wordStore.words.count, id: \.self) { index in
-            PageIndicatorCircle(
-                index: index,
-                currentPageIndex: currentPageIndex,
-                colorScheme: colorScheme
-            )
-        }
-        .transition(.opacity.combined(with: .move(edge: .bottom)))
-    }
-    
-    private func handleWordsChange(oldValue: [WordModel], newValue: [WordModel]) {
-        if !newValue.isEmpty {
+    private func handleWordsChange( newValue: MeaningModel?) {
+        if newValue != nil {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation {
                     blurView = false
@@ -230,12 +186,7 @@ struct WordView: View {
         }
     }
     
-    private func handleWordsCountChange(oldValue: Int, newValue: Int) {
-        if newValue > 0 && oldValue == 0 {
-            currentPageIndex = 0
-            scrollPosition = 0
-        }
-    }
+
     
     @ViewBuilder
     private func textWithSubscript(_ text: String, color: Color, size: CGFloat, weight: Font.Weight, subscriptWord: String) -> some View {
