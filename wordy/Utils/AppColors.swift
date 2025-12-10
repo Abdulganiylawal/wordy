@@ -142,7 +142,7 @@ struct AppColors {
     }
     
     static func background(colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? .black : .white
+        colorScheme == .dark ? .black : Color(hex: "#E9E1D9")
     }
     
     static func backgroundSurfaceMute(colorScheme: ColorScheme) -> Color {
