@@ -15,6 +15,7 @@ struct Wordpicker: View {
     @State private var selectedLetter: String?
     @Namespace var transition
     @State private var wantsToPickLetter:Bool = false
+    @State private var onAppear: Bool = false
     init(wordStore: WordStore, showNextView: Binding<Bool>) {
         self.wordStore = wordStore
         self._showNextView = showNextView
@@ -23,7 +24,7 @@ struct Wordpicker: View {
     var body: some View {
         Group {
             if wantsToPickLetter {
-                PickLetter(transition: transition, selectedLetter: $selectedLetter)
+                PickLetter(transition: transition, selectedLetter: $selectedLetter, wantsToPickLetter: $wantsToPickLetter)
             } else {
                 HStack {
                     Button {
@@ -36,19 +37,20 @@ struct Wordpicker: View {
                             .foregroundStyle(AppColors.iconInverted(colorScheme: colorScheme))
                             .bold()
                             .padding()
-                   
+                      .contentShape(Rectangle())
                             
                         } else {
                             Text(selectedLetter ?? "")
                                 .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .bold)
                                 .padding()
-                                
+                                  .contentShape(Rectangle()) 
                         }
                     }
-                    .frame(width: 60,height: 44,alignment: .leading)
+                    .frame(width: 50,height: 44,alignment: .leading)
                     .hapticFeedback(style: .soft)
                     .buttonStyle(BouncyButton())
-                    
+                  
+
                     ScrollView(.horizontal) {
                         LazyHStack {
                             ForEach(dbStore.meanings, id: \.word) { meaning in
@@ -59,20 +61,22 @@ struct Wordpicker: View {
                                     }
                                 } label: {
                                     Text(meaning.word)
-                                        .customTextStyle(color: AppColors.textMute(colorScheme: colorScheme), size: 16, weight: .medium)
+                                        .customTextStyle(color: wordStore.words?.word == meaning.word ? AppColors.textInverted(colorScheme: colorScheme) : AppColors.textMute(colorScheme: colorScheme), size: 16, weight: .medium)
                                 }
                                 .hapticFeedback(style: .soft)
                                 .buttonStyle(BouncyButton())
+                                .applyHorizontalScrollTransition()
                             }
                         }
                     }
                 }
                 .frame(height: 44)
                 .frame(maxWidth: .infinity)
-                .cardBackgroundWithTransitionStyle(radius: 50, transition: transition)
+                .cardBackgroundWithTransitionStyle(radius: 25, transition: transition)
+           
             }
         }
-        .transition(.scale(scale: 1))
+        .transition(.scale(scale: 1).combined(with: .opacity))
     }
 }
 

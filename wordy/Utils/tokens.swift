@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 class Tokens {
-    static let menuSpring = Animation.spring(response: 0.6, dampingFraction: 0.45, blendDuration: 0.1)
+    static let menuSpring = Animation.spring(response: 0.6, dampingFraction: 0.75, blendDuration: 0.5)
     static let backgroundBlur:CGFloat = 250
     static let topPadding: CGFloat = 20
     static let fastBounceAnimation: Animation = .spring(response: 0.2, dampingFraction: 0.8, blendDuration: 0.1)

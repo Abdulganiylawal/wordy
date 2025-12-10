@@ -16,6 +16,31 @@ struct BouncyButton: ButtonStyle {
     }
 }
 
+struct BlurScrollTransitionModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .scrollTransition() { view, phase in
+                view
+                  
+                    .blur(radius: phase.isIdentity ? 0 : 15)
+                
+            }
+    }
+}
+
+
+struct BlurScrollTransitionModifierHorizontal: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .scrollTransition(.animated(.bouncy(duration: 0.4, extraBounce: 0.2)),axis: .horizontal) { view, phase in
+                view
+                    .blur(radius: phase.isIdentity ? 0 : 15)
+                    .scaleEffect(phase.isIdentity ? 1 : 0.8)
+                    
+            }
+    }
+}
+
 
 struct ThreeDButtonStyle: ButtonStyle {
     let color:String

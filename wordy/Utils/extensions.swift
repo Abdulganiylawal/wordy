@@ -18,6 +18,12 @@ extension View {
         self.modifier(CardBackgroundWithTransition(radius: radius, transition: transition))
     }
 
+      func blurFade(_ fade: Bool) -> some View {
+        self
+            .blur(radius: fade ? 0 : 5)
+            .opacity(fade ? 1 : 0)
+    }
+
 
     func placeholder<Content: View>(
         when shouldShow: Bool,
@@ -32,6 +38,14 @@ extension View {
             }
             self
         }
+    }
+    
+    func applyBlurScrollTransition() -> some View {
+        self.modifier(BlurScrollTransitionModifier())
+    }
+    
+    func applyHorizontalScrollTransition() -> some View {
+        self.modifier(BlurScrollTransitionModifierHorizontal())
     }
 }
 

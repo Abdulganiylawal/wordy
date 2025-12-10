@@ -68,7 +68,7 @@ struct WordView: View {
             Group {
                 if showNextView {
                     textWithSubscript(
-                        wordStore.searchWord,
+                        wordStore.searchWord.isEmpty ? wordStore.words?.word ?? "" : wordStore.searchWord,
                         color: AppColors.textInverted(colorScheme: colorScheme),
                         size: 28,
                         weight: .bold,
@@ -87,7 +87,7 @@ struct WordView: View {
         }
         .padding(.horizontal)
         .background(
-            BlurredTopBackgroundView(height: 100, blurRadius: Tokens.backgroundBlur)
+            BlurredTopBackgroundView(height: 40, blurRadius: Tokens.backgroundBlur)
         )
     }
     
