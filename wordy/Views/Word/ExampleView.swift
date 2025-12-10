@@ -23,6 +23,7 @@ struct ExampleView: View {
                             .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .medium)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 1)
+                            .applyBlurScrollTransition()
                     }
                 
             }

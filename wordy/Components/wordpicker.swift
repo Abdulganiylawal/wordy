@@ -22,35 +22,17 @@ struct Wordpicker: View {
     }
     
     var body: some View {
-        Group {
+        HStack(alignment:.bottom) {
+            CircularButton(icon: "clock.arrow.circlepath", action: {
+                withAnimation(Tokens.menuSpring) {
+                    wantsToPickLetter = true
+                }
+            })
+            
             if wantsToPickLetter {
                 PickLetter(transition: transition, selectedLetter: $selectedLetter, wantsToPickLetter: $wantsToPickLetter)
             } else {
                 HStack {
-                    Button {
-                        withAnimation(Tokens.menuSpring) {
-                            wantsToPickLetter = true
-                        }
-                    } label: {
-                        if selectedLetter == nil {
-                        Image(systemName: "clock.arrow.circlepath")
-                            .foregroundStyle(AppColors.iconInverted(colorScheme: colorScheme))
-                            .bold()
-                            .padding()
-                      .contentShape(Rectangle())
-                            
-                        } else {
-                            Text(selectedLetter ?? "")
-                                .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .bold)
-                                .padding()
-                                  .contentShape(Rectangle()) 
-                        }
-                    }
-                    .frame(width: 50,height: 44,alignment: .leading)
-                    .hapticFeedback(style: .soft)
-                    .buttonStyle(BouncyButton())
-                  
-
                     ScrollView(.horizontal) {
                         LazyHStack {
                             ForEach(dbStore.meanings, id: \.word) { meaning in
@@ -68,12 +50,14 @@ struct Wordpicker: View {
                                 .applyHorizontalScrollTransition()
                             }
                         }
+                        .padding(.horizontal)
+                        
                     }
+                    .frame(height: 44)
+                    .frame(maxWidth: .infinity)
+                    .cardBackgroundWithTransitionStyle(radius: 25, transition: transition)
+                    
                 }
-                .frame(height: 44)
-                .frame(maxWidth: .infinity)
-                .cardBackgroundWithTransitionStyle(radius: 25, transition: transition)
-           
             }
         }
         .transition(.scale(scale: 1).combined(with: .opacity))
@@ -89,31 +73,31 @@ struct Wordpicker: View {
 
 struct CardBackgroundWithTransition: ViewModifier {
     let radius: CGFloat
-
+    
     let transition: Namespace.ID?
-
+    
     @Environment(\.colorScheme) var colorScheme
     
     func body(content: Content) -> some View {
-
-            content
-                .background(
-                    ZStack {
-                        ConcentricRectangle()
-                            .fill( .clear)
-                            .glassEffect(.clear,in: .rect(cornerRadius: radius, style: .continuous))
-                    }
-                        .containerShape(.rect(cornerRadius: radius, style: .continuous))
-                        .modifier(OptionalMatchedGeometry(id: "transition", namespace: transition))
-                )
-            
-                .mask(
+        
+        content
+            .background(
+                ZStack {
                     ConcentricRectangle()
-                        .fill(.clear)
-                        .glassEffect(.clear.tint(.clear),in: .rect(cornerRadius: radius, style: .continuous))
-                        .modifier(OptionalMatchedGeometry(id: "mask", namespace: transition))
-                )
-            
+                        .fill( .clear)
+                        .glassEffect(.clear,in: .rect(cornerRadius: radius, style: .continuous))
+                }
+                    .containerShape(.rect(cornerRadius: radius, style: .continuous))
+                    .modifier(OptionalMatchedGeometry(id: "transition", namespace: transition))
+            )
+        
+            .mask(
+                ConcentricRectangle()
+                    .fill(.clear)
+                    .glassEffect(.clear.tint(.clear),in: .rect(cornerRadius: radius, style: .continuous))
+                    .modifier(OptionalMatchedGeometry(id: "mask", namespace: transition))
+            )
+        
         
     }
 }

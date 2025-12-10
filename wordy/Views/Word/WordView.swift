@@ -34,8 +34,15 @@ struct WordView: View {
                 .safeAreaBar(edge: .top) {
                     topBarContent
                 }
-                .safeAreaBar(edge: .bottom) {
-                    bottomBarContent
+                .safeAreaInset(edge: .bottom) {
+                    ZStack(alignment: .bottom){
+                        VariableBlurView(maxBlurRadius: 5, direction: .blurredBottomClearTop)
+                            .frame(height: 89)
+                            .padding([.horizontal, .bottom], -50)
+                        
+                        
+                        bottomBarContent
+                    }
                 }
                 .onChange(of: wordStore.words) { oldValue, newValue in
                     handleWordsChange( newValue: newValue)
