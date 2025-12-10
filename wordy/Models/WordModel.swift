@@ -35,13 +35,13 @@ struct AIDictionaryModel: Codable, Equatable {
 }
 
 struct MeaningModel: Codable, Equatable{
-   
+    let word: String
     let partOfSpeech: String?
     let phonetics: [Phonetics]?
     let definitions: AIDictionaryModel
 
     enum CodingKeys: String, CodingKey {
-      
+        case word = "word"
         case partOfSpeech = "partOfSpeech"
         case phonetics = "phonetics"
         case definitions = "definitions"
@@ -49,8 +49,8 @@ struct MeaningModel: Codable, Equatable{
  
     
 
-    init( partOfSpeech: String?, phonetics: [Phonetics]?, definitions: AIDictionaryModel) {
-   
+    init(word: String, partOfSpeech: String?, phonetics: [Phonetics]?, definitions: AIDictionaryModel) {
+        self.word = word
         self.partOfSpeech = partOfSpeech
         self.phonetics = phonetics
         self.definitions = definitions
@@ -58,7 +58,7 @@ struct MeaningModel: Codable, Equatable{
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-      
+        word = try values.decode(String.self, forKey: .word)
         partOfSpeech = try values.decodeIfPresent(String.self, forKey: .partOfSpeech)
         phonetics = try values.decodeIfPresent([Phonetics].self, forKey: .phonetics)
         definitions = try values.decode(AIDictionaryModel.self, forKey: .definitions)
@@ -85,7 +85,7 @@ struct MeaningModel: Codable, Equatable{
         
         return LocalMeaningModel(
             id: nil,
-      
+            word: meaning.word,
             partOfSpeech: meaning.partOfSpeech ?? "",
             phonetics: phoneticsString,
             definitions: definitionsString

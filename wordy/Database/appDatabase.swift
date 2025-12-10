@@ -20,6 +20,7 @@ struct AppDatabase:Sendable {
         migrator.registerMigration("createMeaningsTable") { db in
             try db.create(table: "meanings") { t in
                 t.autoIncrementedPrimaryKey("id")
+                t.column("word", .text).notNull()
                 t.column("partOfSpeech", .text).notNull()
                 t.column("phonetics", .text).notNull()
                 t.column("definitions", .text).notNull()

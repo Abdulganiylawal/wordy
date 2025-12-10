@@ -13,6 +13,10 @@ extension View {
         }
         .animation(animation, value: condition)
     }
+    
+    func cardBackgroundWithTransitionStyle(radius:CGFloat,transition:Namespace.ID?) -> some View {
+        self.modifier(CardBackgroundWithTransition(radius: radius, transition: transition))
+    }
 
 
     func placeholder<Content: View>(

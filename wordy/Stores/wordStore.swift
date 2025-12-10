@@ -24,7 +24,7 @@ class WordStore {
             updateLoading(status: .loading)
             let (fromDic, fromAi) = try await wordService.getMeaning(word)
             let foundPhonetics = fromDic.first?.phonetics?.compactMap { $0.audio != nil ? $0 : nil }
-            words = MeaningModel(partOfSpeech: fromDic.first?.phonetic, phonetics: foundPhonetics, definitions: fromAi)
+            words = MeaningModel(word: word, partOfSpeech: fromDic.first?.phonetic, phonetics: foundPhonetics, definitions: fromAi)
             debugLog(words)
             updateLoading(status: .finished)
             return words

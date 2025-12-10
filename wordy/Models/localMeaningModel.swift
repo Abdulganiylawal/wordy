@@ -7,13 +7,14 @@ import GRDB
 // this is the model for the local database
 struct LocalMeaningModel: Codable, Equatable, FetchableRecord, MutablePersistableRecord {
     var id: Int64?
-    
+    let word: String
     let partOfSpeech: String
     let phonetics: String
     let definitions: String
 
     enum CodingKeys: String, CodingKey {
         case id = "id"
+        case word = "word"
         case partOfSpeech = "partOfSpeech"
 
         case phonetics = "phonetics"
@@ -22,6 +23,7 @@ struct LocalMeaningModel: Codable, Equatable, FetchableRecord, MutablePersistabl
     
     enum Columns {
         static let id = Column(CodingKeys.id)
+        static let word = Column(CodingKeys.word)
         static let partOfSpeech = Column(CodingKeys.partOfSpeech)
         static let phonetics = Column(CodingKeys.phonetics)
  
@@ -60,7 +62,7 @@ struct LocalMeaningModel: Codable, Equatable, FetchableRecord, MutablePersistabl
        let definitionsModel = try JSONDecoder().decode(AIDictionaryModel.self, from: definitionsData)
        
        return MeaningModel(
-    
+        word: localMeaning.word,
            partOfSpeech: localMeaning.partOfSpeech.isEmpty ? nil : localMeaning.partOfSpeech,
            phonetics: phoneticsArray,
            definitions: definitionsModel

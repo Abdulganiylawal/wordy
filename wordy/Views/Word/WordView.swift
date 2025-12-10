@@ -20,6 +20,7 @@ struct WordView: View {
     @State private var showNextView = false
     @State private var scrollPosition: Int? = nil
     
+    
     var body: some View {
         GeometryReader { geometry in
             mainContentView(geometry: geometry)
@@ -42,7 +43,7 @@ struct WordView: View {
                 .onChange(of: wordStore.loading) {
                     handleLoadingChange()
                 }
-               
+            
         }
     }
     
@@ -74,7 +75,7 @@ struct WordView: View {
                         subscriptWord: ""
                     )
                     
-                  
+                    
                     Spacer()
                     closeButton
                 } else {
@@ -142,33 +143,40 @@ struct WordView: View {
     
     @ViewBuilder
     private var bottomBarContent: some View {
-        HStack {
-            if !showNextView {
-                Spacer()
-                searchButton
+        
+        ZStack{
+            BlurredTopBackgroundView(height: 40, blurRadius: Tokens.backgroundBlur)
+            HStack(alignment: .bottom){
+                Wordpicker( wordStore: wordStore,showNextView: $showNextView)
+                if !showNextView {
+                    searchButton
+                }
+                
             }
         }
+        
         .padding(.horizontal)
+        .opacity(keyboardManager.isKeyboardVisible ? 0 : 1)
+        .animation(.easeInOut, value: keyboardManager.isKeyboardVisible)
     }
     
     @ViewBuilder
     private var searchButton: some View {
         CircularButton(icon: "magnifyingglass", buttonColor: .blue, useButtonColor: true) {
             Task {
-               if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
-                do {
-                    let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
-                    await dbStore.saveMeaning(localMeaning)
-                } catch {
-                    debugLog("Error converting meaning to local meaning: \(error.localizedDescription)")
+                if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
+                    do {
+                        let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
+                        await dbStore.saveMeaning(localMeaning)
+                    } catch {
+                        debugLog("Error converting meaning to local meaning: \(error.localizedDescription)")
+                    }
                 }
-               }
             }
         }
-        .opacity(keyboardManager.isKeyboardVisible ? 0 : 1)
-        .animation(.easeInOut, value: keyboardManager.isKeyboardVisible)
+        
     }
-  
+    
     
     private func handleWordsChange( newValue: MeaningModel?) {
         if newValue != nil {
@@ -176,7 +184,7 @@ struct WordView: View {
                 withAnimation {
                     blurView = false
                     showNextView = true
-                   
+                    
                 }
             }
         }
@@ -194,7 +202,7 @@ struct WordView: View {
         }
     }
     
-
+    
     
     @ViewBuilder
     private func textWithSubscript(_ text: String, color: Color, size: CGFloat, weight: Font.Weight, subscriptWord: String) -> some View {
@@ -211,10 +219,10 @@ struct WordView: View {
                 +
                 Text(subscriptText)
                     .font(.system(size: 14, weight: .medium, design: .rounded))
-     
+                
                     .foregroundColor(color)
                     .baselineOffset(size * 0.30)
-            
+                
             )     .contentTransition(.numericText())
         } else {
             return Text(text)
@@ -254,4 +262,5 @@ struct PageIndicatorCircle: View {
 #Preview {
     WordView()
         .environment(KeyboardManager())
+        .environment(DbStore(.empty()))
 }
