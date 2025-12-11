@@ -19,7 +19,8 @@ struct WordView: View {
     @State private var currentPageIndex: Int = 0
     @State private var showNextView = false
     @State private var scrollPosition: Int? = nil
-    
+    @State private var showSettingsView = false
+    @Environment(LocalLLmService.self) var localLLM
     
     var body: some View {
         GeometryReader { geometry in
@@ -49,6 +50,12 @@ struct WordView: View {
                 }
                 .onChange(of: wordStore.loading) {
                     handleLoadingChange()
+                }
+                .sheet(isPresented: $showSettingsView) {
+                    NavigationStack {
+                        SettingsView()
+                            
+                    }
                 }
             
         }
@@ -121,7 +128,7 @@ struct WordView: View {
         .padding(Tokens.Spacing.lg)
         
         CircularButton(icon: "gear") {
-            //
+            showSettingsView = true
         }
         .blur(radius: blurView ? 10 : 0)
         .animation(.easeInOut, value: blurView)

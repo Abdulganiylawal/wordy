@@ -11,8 +11,8 @@ import GRDB
 struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var dbStore: DbStore
+    @Environment(LocalLLmService.self) var localLLM
     
-
 
     init(_ appDatabase: AppDatabase) {
       
@@ -23,6 +23,7 @@ struct ContentView: View {
     var body: some View {
         WordView()
             .environment(dbStore)
+         
     }
 }
 

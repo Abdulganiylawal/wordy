@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		763E5CEF2EE8A208005EB24C /* AIProxy in Frameworks */ = {isa = PBXBuildFile; productRef = 763E5CEE2EE8A208005EB24C /* AIProxy */; };
+		763E68FE2EEB1685005EB24C /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 763E68FD2EEB1685005EB24C /* MLXLLM */; };
+		763E69002EEB1685005EB24C /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 763E68FF2EEB1685005EB24C /* MLXLMCommon */; };
 		D1A371DBC054FEE7814D11A5 /* Pods_wordy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D679ADD2BFCEBFC0D3D72F0 /* Pods_wordy.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,7 +33,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				763E68FE2EEB1685005EB24C /* MLXLLM in Frameworks */,
 				D1A371DBC054FEE7814D11A5 /* Pods_wordy.framework in Frameworks */,
+				763E69002EEB1685005EB24C /* MLXLMCommon in Frameworks */,
 				763E5CEF2EE8A208005EB24C /* AIProxy in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -125,6 +129,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				763E5CED2EE8A208005EB24C /* XCRemoteSwiftPackageReference "AIProxySwift" */,
+				763E68FC2EEB1685005EB24C /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 76477D172EE71C6F0010A51E /* Products */;
@@ -332,6 +337,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = wordy/wordy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -367,6 +373,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = wordy/wordy.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -428,6 +435,14 @@
 				minimumVersion = 0.134.0;
 			};
 		};
+		763E68FC2EEB1685005EB24C /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.29.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -435,6 +450,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 763E5CED2EE8A208005EB24C /* XCRemoteSwiftPackageReference "AIProxySwift" */;
 			productName = AIProxy;
+		};
+		763E68FD2EEB1685005EB24C /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 763E68FC2EEB1685005EB24C /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLLM;
+		};
+		763E68FF2EEB1685005EB24C /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 763E68FC2EEB1685005EB24C /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

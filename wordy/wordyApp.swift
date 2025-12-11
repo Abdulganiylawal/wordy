@@ -11,6 +11,8 @@ import AIProxy
 @main
 struct wordyApp: App {
     @State var keyboardManager = KeyboardManager()
+    @State var localLLM = LocalLLmService()
+    @StateObject var preferences = UserStores()
     init() {
         AIProxy.configure(
             logLevel: .debug,
@@ -25,6 +27,8 @@ struct wordyApp: App {
             ContentView(.shared)
                 .environment(KeyboardManager())
                 .appDatabase(.shared)
+                .environment(localLLM)
+                .environmentObject(preferences)
         }
     }
 }
