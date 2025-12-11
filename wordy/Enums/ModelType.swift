@@ -8,7 +8,7 @@
 
 import Foundation
 import MLXLMCommon
-
+import MLXLLM
 
 public extension ModelConfiguration {
     enum ModelType {
@@ -31,13 +31,9 @@ extension ModelConfiguration: @retroactive Equatable {
         return lhs.name == rhs.name
     }
 
-    public static let llama_3_2_1b_4bit = ModelConfiguration(
-        id: "mlx-community/Llama-3.2-1B-Instruct-4bit"
-    )
+    public static let llama_3_2_1b_4bit:ModelConfiguration = LLMRegistry.llama3_1_8B_4bit
 
-    public static let llama_3_2_3b_4bit = ModelConfiguration(
-        id: "mlx-community/Llama-3.2-3B-Instruct-4bit"
-    )
+    public static let llama_3_2_3b_4bit = LLMRegistry.llama3_2_3B_4bit
 
     public static let deepseek_r1_distill_qwen_1_5b_4bit = ModelConfiguration(
         id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit"

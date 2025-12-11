@@ -55,6 +55,7 @@ class LocalLLmService {
             return modelContainer
             
         case .loaded(let modelContainer):
+            debugLog("Model loaded successfully")
             return modelContainer
         }
     }
@@ -102,12 +103,37 @@ class LocalLLmService {
     }
     
     
-    func switchModel(_ model: ModelConfiguration) async {
+    func switchModel(_ model: ModelConfiguration) async -> (Bool, Error?) {
         downloadProgress = 0.0
         loadState = .idle
         modelConfiguration = model
-        _ = try? await load(modelName: model.name)
+        do {
+            _  = try await load(modelName: model.name)
+            return (true, nil)  
+        } catch {
+            debugLog("Error in switchModel: \(error.localizedDescription)")
+            return (false, error)
+           
+        }
     }
+    
+    
+    
+    private nonisolated func createPrompt(_ prompt: String, images: [UserInput.Image]) -> UserInput.Prompt {
+            if images.isEmpty {
+                return .text(prompt)
+            } else {
+             
+                let message: Message = [
+                    "role": "user",
+                    "content": [
+                        ["type": "text", "text": prompt]
+                    ] + images.map { _ in ["type": "image"] }
+                ]
+
+                return .messages([message])
+            }
+        }
     
     
 }

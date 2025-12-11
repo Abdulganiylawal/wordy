@@ -51,4 +51,10 @@ class UserStores:ObservableObject {
     func modelDisplayName(_ modelName: String) -> String {
         return modelName.replacingOccurrences(of: "mlx-community/", with: "").lowercased()
     }
+    
+    var availableMemory: Double {
+            let ramInBytes = ProcessInfo.processInfo.physicalMemory
+            let ramInGB = Double(ramInBytes) / (1024 * 1024 * 1024)
+            return ramInGB
+        }
 }
