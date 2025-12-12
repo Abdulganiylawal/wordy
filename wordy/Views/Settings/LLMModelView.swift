@@ -18,6 +18,7 @@ struct LLMModelView: View {
     @State private var wantsToInstallModel = false
     @State var didSwitchModel = false
     @State var error: Error?
+    
     func sizeBadge(_ model: ModelConfiguration?) -> String? {
         guard let size = model?.modelSize else { return nil }
         return "\(size) GB"

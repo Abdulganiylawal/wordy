@@ -20,9 +20,22 @@
 		A71C1F6B83C10B8FB84E92B7 /* Pods-wordy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-wordy.release.xcconfig"; path = "Target Support Files/Pods-wordy/Pods-wordy.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7661C4732EEC29E4008EC496 /* Exceptions for "wordy" folder in "wordy" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 76477D152EE71C6F0010A51E /* wordy */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		76477D182EE71C6F0010A51E /* wordy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7661C4732EEC29E4008EC496 /* Exceptions for "wordy" folder in "wordy" target */,
+			);
 			path = wordy;
 			sourceTree = "<group>";
 		};
@@ -344,6 +357,7 @@
 				DEVELOPMENT_TEAM = X84MQ7N5KN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wordy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -380,6 +394,7 @@
 				DEVELOPMENT_TEAM = X84MQ7N5KN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wordy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

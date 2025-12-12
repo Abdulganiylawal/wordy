@@ -21,6 +21,7 @@ struct WordView: View {
     @State private var scrollPosition: Int? = nil
     @State private var showSettingsView = false
     @Environment(LocalLLmService.self) var localLLM
+    @EnvironmentObject var prefrences: UserStores
     
     var body: some View {
         GeometryReader { geometry in
@@ -55,6 +56,16 @@ struct WordView: View {
                     NavigationStack {
                         SettingsView()
                             
+                    }
+                }
+                .task {
+                    if let model = prefrences.currentModelName {
+                        do {
+                            try await localLLM.load(modelName: model)
+                        } catch {
+                            debugLog("Error loading model \(error.localizedDescription)")
+                        }
+                        
                     }
                 }
             
@@ -178,14 +189,16 @@ struct WordView: View {
     private var searchButton: some View {
         CircularButton(icon: "magnifyingglass", buttonColor: .blue, useButtonColor: true) {
             Task {
-                if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
-                    do {
-                        let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
-                        await dbStore.saveMeaning(localMeaning)
-                    } catch {
-                        debugLog("Error converting meaning to local meaning: \(error.localizedDescription)")
-                    }
-                }
+                await localLLM.input(word: wordStore.searchWord)
+//                if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
+//                    do {
+//                        await localLLM.input(word: wordStore.searchWord)
+//                        // let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
+//                        // await dbStore.saveMeaning(localMeaning)
+//                    } catch {
+//                        debugLog("Error converting meaning to local meaning: \(error.localizedDescription)")
+//                    }
+//                }
             }
         }
         

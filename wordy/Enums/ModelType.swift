@@ -31,7 +31,7 @@ extension ModelConfiguration: @retroactive Equatable {
         return lhs.name == rhs.name
     }
 
-    public static let llama_3_2_1b_4bit:ModelConfiguration = LLMRegistry.llama3_1_8B_4bit
+    public static let llama_3_2_1b_4bit:ModelConfiguration = LLMRegistry.llama3_2_1B_4bit
 
     public static let llama_3_2_3b_4bit = LLMRegistry.llama3_2_3B_4bit
 
