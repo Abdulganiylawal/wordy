@@ -16,6 +16,15 @@ struct AIDictionaryModel: Codable, Equatable {
     let antonyms: [String]
     let example: [String]
 
+
+    init(definition: String, typeOfWord: String, synonyms: [String], antonyms: [String], example: [String]) {
+        self.definition = definition
+        self.typeOfWord = typeOfWord
+        self.synonyms = synonyms
+        self.antonyms = antonyms
+        self.example = example
+    }
+
     enum CodingKeys: String, CodingKey {
         case definition = "definition"
         case typeOfWord = "typeOfWord"

@@ -22,17 +22,18 @@ struct WordView: View {
     @State private var showSettingsView = false
     @Environment(LocalLLmService.self) var localLLM
     @EnvironmentObject var prefrences: UserStores
+    @Environment(\.isPreview) var isPreview
     
     var body: some View {
-        GeometryReader { geometry in
-            mainContentView(geometry: geometry)
+       
+            mainContentView
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(AppColors.background(colorScheme: colorScheme))
+            
                 .onTapGesture {
                     keyboardManager.dismissKeyboard()
                 }
-                .overlay(alignment: .center) {
-                    textFieldOverlay
-                }
+               
                 .safeAreaBar(edge: .top) {
                     topBarContent
                 }
@@ -55,13 +56,13 @@ struct WordView: View {
                 .sheet(isPresented: $showSettingsView) {
                     NavigationStack {
                         SettingsView()
-                            
+                        
                     }
                 }
                 .task {
                     if let model = prefrences.currentModelName {
                         do {
-                            try await localLLM.load(modelName: model)
+                            localLLM.modelContainer = try await localLLM.load(modelName: model)
                         } catch {
                             debugLog("Error loading model \(error.localizedDescription)")
                         }
@@ -69,20 +70,51 @@ struct WordView: View {
                     }
                 }
             
-        }
+        
     }
     
     @ViewBuilder
-    private func mainContentView(geometry: GeometryProxy) -> some View {
-        ScrollView {
-            if showNextView && wordStore.words != nil {
-                ResultView(wordStore: wordStore, word: wordStore.words!)
-                    .padding(.top,20)
-                    .padding(.bottom,80)
+    private var mainContentView: some View {
+        Group {
+            if !showNextView {
+                VStack {
+                    Spacer()
+                    TextField("", text: $wordStore.searchWord)
+                        .textFieldStyle(.plain)
+                        .multilineTextAlignment(.center)
+                        .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 28, weight: .medium)
+                        .placeholder(when: wordStore.searchWord.isEmpty, alignment: .center) {
+                            Text("Enter Word")
+                                .customTextStyle(color: AppColors.textMute(colorScheme: colorScheme), size: 25, weight: .medium)
+                        }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                
+                .blur(radius: blurView ? 10 : 0)
+                .animation(.easeInOut, value: blurView)
+                .overlay(content: {
+                    if blurView {
+                        LoadingAnimation(message: "Getting Meaning", color: AppColors.textInverted(colorScheme: colorScheme))
+                            .frame(maxWidth: .infinity,maxHeight: .infinity)
+                            .transition(.scale(scale: 1))
+                    }
+                })
             }
+            
+            if showNextView && wordStore.words != nil {
+                ScrollView {
+                    
+                    
+                    ResultView(wordStore: wordStore, word: wordStore.words!)
+                        .padding(.top,20)
+                        .padding(.bottom,80)
+                }
+                .scrollIndicators(.hidden)
+            }
+            
         }
-        .scrollIndicators(.hidden)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .transition(.opacity.combined(with: .scale(1)))
     }
     
     
@@ -145,34 +177,16 @@ struct WordView: View {
         .animation(.easeInOut, value: blurView)
     }
     
-    @ViewBuilder
-    private var textFieldOverlay: some View {
-        if !showNextView {
-            VStack {
-                Spacer()
-                TextField("", text: $wordStore.searchWord)
-                    .textFieldStyle(.plain)
-                    .multilineTextAlignment(.center)
-                    .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 28, weight: .medium)
-                    .placeholder(when: wordStore.searchWord.isEmpty, alignment: .center) {
-                        Text("Enter Word")
-                            .customTextStyle(color: AppColors.textMute(colorScheme: colorScheme), size: 25, weight: .medium)
-                    }
-                Spacer()
-            }
-            .padding(.horizontal)
-            .blur(radius: blurView ? 10 : 0)
-            .animation(.easeInOut, value: blurView)
-        }
-    }
     
-    @ViewBuilder
+    
     private var bottomBarContent: some View {
         
         ZStack{
             BlurredTopBackgroundView(height: 40, blurRadius: Tokens.backgroundBlur)
+            
             HStack(alignment: .bottom){
                 Wordpicker( wordStore: wordStore,showNextView: $showNextView)
+                
                 if !showNextView {
                     searchButton
                 }
@@ -183,25 +197,43 @@ struct WordView: View {
         .padding(.horizontal)
         .opacity(keyboardManager.isKeyboardVisible ? 0 : 1)
         .animation(.easeInOut, value: keyboardManager.isKeyboardVisible)
+        .blur(radius: blurView ? 10 : 0)
+        .animation(.easeInOut, value: blurView)
     }
     
-    @ViewBuilder
+
     private var searchButton: some View {
         CircularButton(icon: "magnifyingglass", buttonColor: .blue, useButtonColor: true) {
-            Task {
-                await localLLM.input(word: wordStore.searchWord)
-//                if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
-//                    do {
-//                        await localLLM.input(word: wordStore.searchWord)
-//                        // let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
-//                        // await dbStore.saveMeaning(localMeaning)
-//                    } catch {
-//                        debugLog("Error converting meaning to local meaning: \(error.localizedDescription)")
-//                    }
-//                }
+            if isPreview {
+                previewStuff()
+            }
+            else {
+                Task {
+                    //                await localLLM.input(word: wordStore.searchWord)
+                    if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
+                        do {
+                            await localLLM.input(word: wordStore.searchWord)
+                            let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
+                            await dbStore.saveMeaning(localMeaning)
+                        } catch {
+                            debugLog("Error converting meaning to local meaning: \(error.localizedDescription)")
+                        }
+                    }
+                }
             }
         }
         
+    }
+    
+    private func previewStuff() {
+        wordStore.loading = .loading
+        handleLoadingChange()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            withAnimation {
+                blurView = false
+                showNextView = true
+            }
+        }
     }
     
     
@@ -211,7 +243,7 @@ struct WordView: View {
                 withAnimation {
                     blurView = false
                     showNextView = true
-                    
+                    wordStore.searchWord = ""
                 }
             }
         }
@@ -290,4 +322,7 @@ struct PageIndicatorCircle: View {
     WordView()
         .environment(KeyboardManager())
         .environment(DbStore(.empty()))
+        .environment(LocalLLmService())
+        .environmentObject(UserStores())
+        .environment(\.isPreview, true)
 }

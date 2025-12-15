@@ -6,11 +6,48 @@
 //
 
 import Foundation
+import MLX
 import MLXLLM
 import MLXLMCommon
-internal import Tokenizers
 import SwiftUI
-import MLX
+import Hub
+internal import Tokenizers
+
+
+import Foundation
+
+
+class MLXFolderManager {
+    
+
+    private static let appGroupID = "group.com.lawalAbdulganiy.llm.models"
+    
+
+    private static let folderName = "MLXModels"
+    
+
+    public static var sharedFolderURL: URL {
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            fatalError("Failed to access App Group container")
+        }
+        
+        let folderURL = containerURL.appendingPathComponent(folderName)
+        
+        if !FileManager.default.fileExists(atPath: folderURL.path) {
+            do {
+                try FileManager.default.createDirectory(at: folderURL,
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+                print("Created MLXModels folder at \(folderURL.path)")
+            } catch {
+                fatalError("Failed to create MLXModels folder: \(error)")
+            }
+        }
+        
+        return folderURL
+    }
+}
+
 
 @Observable
 class LocalLLmService {
@@ -31,7 +68,17 @@ class LocalLLmService {
         case loaded(ModelContainer)
     }
     
-    let generateParameters = GenerateParameters(temperature: 0.5)
+    public var defaultHubApi: HubApi = {
+        HubApi(downloadBase: MLXFolderManager.sharedFolderURL)
+    }()
+
+    let generateParameters = GenerateParameters(
+        temperature: 0.25,
+        topP: 0.85,
+        repetitionPenalty: 1.05,
+        //        stopSequences: ["}\n\n", "```"]
+    )
+    
     let maxTokens = 4096
     
     var loadState = LoadState.idle
@@ -46,6 +93,7 @@ class LocalLLmService {
             //            MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
             MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
             let modelContainer = try await LLMModelFactory.shared.loadContainer(
+                hub: defaultHubApi,
                 configuration: model
             ) { [weak self] progress in
                 guard let self else { return }
@@ -63,15 +111,15 @@ class LocalLLmService {
         }
     }
     
-    func input(word: String) async{
+    func input(word: String) async {
         guard let modelContainer else { return }
-
+        
         do {
             updateLoading(status: .loading)
             let result = try await modelContainer.perform { context in
-                let prompt = UserInput(
-                    prompt: "Return the meaning of the word: \(word)"
-                )
+                
+                let prompt = UserInput(prompt: createPrompt(word, images: []))
+                
                 let input = try await context.processor.prepare(input: prompt)
                 return try MLXLMCommon.generate(
                     input: input,
@@ -101,7 +149,7 @@ class LocalLLmService {
             if result.output != output {
                 output = result.output
             }
-
+            debugLog("Result is \(output)")
             updateLoading(status: .finished)
         } catch {
             updateLoading(status: .failed)
@@ -109,88 +157,74 @@ class LocalLLmService {
         }
     }
     
-    
     func switchModel(_ model: ModelConfiguration) async -> (Bool, Error?) {
         downloadProgress = 0.0
         loadState = .idle
         modelConfiguration = model
         do {
-            _  = try await load(modelName: model.name)
-            return (true, nil)  
+            _ = try await load(modelName: model.name)
+            return (true, nil)
         } catch {
             debugLog("Error in switchModel: \(error.localizedDescription)")
             return (false, error)
-           
+            
         }
     }
     
-    
-    
-    private nonisolated func createPrompt(_ prompt: String, images: [UserInput.Image]) -> UserInput.Prompt {
-            if images.isEmpty {
-                let message: Message = [
-                    "role": "system",
-                    "content": [
-                        [
-                            "type": "text",
-                            "text": "Return valid JSON only, following the specified JSON schema. Define the following word: \(prompt)"
-                        ],
-                        [
-                            "type": "json_schema",
-                            "schema": [
-                                "type": "object",
-                                "properties": [
-                                    "definition": [
-                                        "type": "string",
-                                        "description": "A clear definition of the word."
-                                    ],
-                                    "typeOfWord": [
-                                        "type": "string",
-                                        "description": "The type of word (noun, verb, adjective, adverb, etc.)."
-                                    ],
-                                    "synonyms": [
-                                        "type": "array",
-                                        "items": ["type": "string"],
-                                        "description": "A list of synonyms for the word."
-                                    ],
-                                    "antonyms": [
-                                        "type": "array",
-                                        "items": ["type": "string"],
-                                        "description": "A list of antonyms for the word."
-                                    ],
-                                    "example": [
-                                        "type": "array",
-                                        "items": ["type": "string"],
-                                        "description": "A list of example sentences showing how the word is used."
-                                    ]
-                                ],
-                                "required": ["definition", "synonyms", "antonyms", "example", "typeOfWord"],
-                                "additionalProperties": false
-                            ]
-                        ]
-                    ]
-                ]
-                return .messages([message])
-            } else {
-             
-                let message: Message = [
-                    "role": "user",
-                    "content": [
-                        ["type": "text", "text": prompt]
-                    ] + images.map { _ in ["type": "image"] }
-                ]
+    private nonisolated func createPrompt(
+        _ prompt: String,
+        images: [UserInput.Image]
+    ) -> UserInput.Prompt {
+        if images.isEmpty {
+            return .text(
+                """
+                You are a dictionary assistant.
+                
+                Define the STANDARD English dictionary meaning of the word "\(prompt)".
 
-                return .messages([message])
-            }
+                STRICT RULES:
+                - The word MUST NOT be used inside its own definition
+                - Do NOT invent verb forms if the word is not a verb
+                - Use the most common dictionary meaning only
+                - If the spelling is incorrect, silently correct it
+                - If the word is an adjective, return "adjective" as typeOfWord
+                
+                Your response MUST be a valid JSON object with EXACTLY the following fields:
+                
+                - "definition": string
+                - "typeOfWord": string (noun, verb, adjective, adverb, etc.)
+                - "synonyms": array of strings
+                - "antonyms": array of strings
+                - "example": array of strings (example sentences)
+                
+                Additional rules:
+                - "typeOfWord" must be one word (noun, verb, adjective, or adverb)
+                - No extra fields
+                - No markdown
+                - No explanations
+                - JSON only
+                """
+            )
+            
+        } else {
+            
+            let message: Message = [
+                "role": "user",
+                "content": [
+                    ["type": "text", "text": prompt]
+                ] + images.map { _ in ["type": "image"] },
+            ]
+            
+            return .messages([message])
         }
+    }
     
-     func updateLoading(status: Loading) {
+    func updateLoading(status: Loading) {
         withAnimation {
             self.loading = status
         }
     }
 }
-
 
 // fixing not downloading models on iphone
 

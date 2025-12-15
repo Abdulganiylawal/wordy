@@ -49,7 +49,7 @@ struct PhoneticView: View {
                         .buttonStyle(BouncyButton())
                     }
                 }
-                .padding(.horizontal, 20)
+       
             }
             .onDisappear {
                 audioPlayer?.pause()
@@ -94,6 +94,6 @@ struct PhoneticView: View {
     }
 }
 
-#Preview {
-    PhoneticView(phonetics: [], typeOfWord: "")
-}
+//#Preview {
+//    PhoneticView(phonetics: [], typeOfWord: "")
+//}

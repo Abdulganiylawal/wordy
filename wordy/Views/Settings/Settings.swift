@@ -25,6 +25,17 @@ struct SettingsView: View {
                 }
                 .badge(prefrences.modelDisplayName(prefrences.currentModelName ?? ""))
                 
+                NavigationLink {
+                    MLXModelsDebugView()
+                } label: {
+                    Label {
+                        Text("Downloaded Models")
+                            .fixedSize()
+                    } icon: {
+                        Image(systemName: "folder.fill")
+                    }
+                }
+                
             }
         }
         .formStyle(.grouped)

@@ -48,6 +48,10 @@ class UserStores:ObservableObject {
         }
     }
     
+    func removeInstalledModel(_ model: String) {
+        installedModels.removeAll { $0 == model }
+    }
+    
     func modelDisplayName(_ modelName: String) -> String {
         return modelName.replacingOccurrences(of: "mlx-community/", with: "").lowercased()
     }

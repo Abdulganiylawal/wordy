@@ -15,6 +15,13 @@ struct Phonetics : Codable,Equatable {
 		case license = "license"
 	}
 
+	init(text: String, audio: String, sourceUrl: String? = nil, license: License? = nil) {
+		self.text = text
+		self.audio = audio
+		self.sourceUrl = sourceUrl
+		self.license = license
+	}
+
 	init(from decoder: Decoder) throws {
 		let values = try decoder.container(keyedBy: CodingKeys.self)
 		text = try values.decodeIfPresent(String.self, forKey: .text)

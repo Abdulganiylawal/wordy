@@ -36,6 +36,8 @@ struct ResultView: View {
     }
 }
 
-//#Preview {
-//    ResultView(wordStore: WordStore(), word: WordModel(word: "Hello"))
-//}
+#Preview {
+    var model = MeaningModel(word: "Hello", partOfSpeech: nil, phonetics: [Phonetics(text: "Phonetic", audio: "https://example.com/audio.mp3")], definitions: AIDictionaryModel(definition: "Definition", typeOfWord: "Type of Word", synonyms: ["Synonym 1", "Synonym 2"], antonyms: ["Antonym 1", "Antonym 2"], example: ["Example 1", "Example 2"]))
+
+    ResultView(wordStore: WordStore(), word: model)
+}
