@@ -17,46 +17,56 @@ struct PhoneticView: View {
     @State private var audioPlayer: AVPlayer?
     @State private var isPlaying = false
     @State private var observer: NSObjectProtocol?
-    @Binding private var showView:Bool
-    init( phonetics: [Phonetics], typeOfWord:String, showView: Binding<Bool>) {
+    
+    private var shouldShowView: Bool { !text.isEmpty }
+    
+    @Binding private var showView: Bool
+    
+    init(phonetics: [Phonetics], typeOfWord: String, showView: Binding<Bool>) {
         let phonetic = phonetics.compactMap { $0 }.first
-        self.phonetic =  phonetic
-        self.text = phonetic?.text ?? ""
-        _showView  = .constant(text.isEmpty)
+        self.phonetic = phonetic
+        let text = phonetic?.text ?? ""
+        self.text = text
         self.sourceUrl = phonetic?.audio ?? ""
         self.typeOfWord = typeOfWord
-        
+        _showView = showView
     }
     
     var body: some View {
-        if (!text.isEmpty) {
-            VStack(alignment: .leading,spacing: 2) {
-                Text("Phonetics")
-                    .customTextStyle(color: AppColors.textMute(colorScheme: colorScheme), size: 16, weight: .medium)
+        if shouldShowView {
+            HStack(alignment: .top){
+                CircleWithThreadView(iconOrEmoji: "circle.fill", isSF: true, color1: AppColors.textDisabled(colorScheme: colorScheme), color2: AppColors.textDisabled(colorScheme: colorScheme), showThread: true, size: 15)
                 
-                HStack {
-                    Text(text)
-                        .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .medium)
-                    Spacer()
-                    if let sourceUrl = sourceUrl, !sourceUrl.isEmpty {
-                        Button(action: {
-                            playAudio()
-                        }) {
-                            Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                                .contentTransition(.symbolEffect(.replace))
-                                .animation(.spring(response: 0.45, dampingFraction: 0.75), value: isPlaying)
-                                .foregroundColor(AppColors.textInverted(colorScheme: colorScheme))
-                                .font(.system(size: 30))
+                VStack(alignment: .leading,spacing: 2) {
+                    Text("Phonetics")
+                        .customTextStyle(color: AppColors.textMute(colorScheme: colorScheme), size: 16, weight: .medium)
+                    
+                    HStack {
+                        Text(text)
+                            .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .medium)
+                        Spacer()
+                        if let sourceUrl = sourceUrl, !sourceUrl.isEmpty {
+                            Button(action: {
+                                playAudio()
+                            }) {
+                                Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                                    .contentTransition(.symbolEffect(.replace))
+                                    .animation(.spring(response: 0.45, dampingFraction: 0.75), value: isPlaying)
+                                    .foregroundColor(AppColors.textInverted(colorScheme: colorScheme))
+                                    .font(.system(size: 30))
+                            }
+                            .hapticFeedback(style: .light)
+                            .buttonStyle(BouncyButton())
                         }
-                        .hapticFeedback(style: .light)
-                        .buttonStyle(BouncyButton())
                     }
+                    
+                    
+                    .multilineTextAlignment(.leading)
+                    .padding(.bottom,5)
                 }
                 
-         
-                .multilineTextAlignment(.leading)
-                .padding(.bottom,5)
             }
+          
             .onDisappear {
                 audioPlayer?.pause()
                 audioPlayer = nil

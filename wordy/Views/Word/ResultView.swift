@@ -35,14 +35,14 @@ struct ResultView: View {
                
             }
             
-            if showPhoneticsView{
-                HStack(alignment: .top) {
-                    CircleWithThreadView(iconOrEmoji: "circle.fill", isSF: true, color1: AppColors.textDisabled(colorScheme: colorScheme), color2: AppColors.textDisabled(colorScheme: colorScheme), showThread: true, size: 15)
+
+    
+                   
                     
                     PhoneticView(phonetics: word.phonetics ?? [], typeOfWord: word.definitions.typeOfWord,showView: $showPhoneticsView)
-                }
                 
-            }
+                
+            
             
            
             
