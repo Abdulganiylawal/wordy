@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct WordView: View {
-    @State private var wordStore = WordStore()
+    @State private var wordStore:WordStore
     @Environment(DbStore.self) var dbStore
     @State private var isLoading: Bool = false
     @Environment(\.colorScheme) var colorScheme
@@ -23,6 +23,10 @@ struct WordView: View {
     @Environment(LocalLLmService.self) var localLLM
     @EnvironmentObject var prefrences: UserStores
     @Environment(\.isPreview) var isPreview
+    
+    init(localLLmService:LocalLLmService) {
+        _wordStore = State(initialValue: WordStore(localLLmService: localLLmService))
+    }
     
     var body: some View {
        
@@ -61,6 +65,7 @@ struct WordView: View {
                 }
                 .task {
                     if let model = prefrences.currentModelName {
+                        debugLog(model)
                         do {
                             localLLM.modelContainer = try await localLLM.load(modelName: model)
                         } catch {
@@ -209,10 +214,10 @@ struct WordView: View {
             }
             else {
                 Task {
-                    //                await localLLM.input(word: wordStore.searchWord)
+                
                     if let meaning = await wordStore.getWordMeaning(wordStore.searchWord) {
                         do {
-                            await localLLM.input(word: wordStore.searchWord)
+                           
                             let localMeaning = try MeaningModel.toLocalMeaningModel(meaning: meaning)
                             await dbStore.saveMeaning(localMeaning)
                         } catch {
@@ -319,7 +324,7 @@ struct PageIndicatorCircle: View {
 }
 
 #Preview {
-    WordView()
+    WordView(localLLmService: LocalLLmService())
         .environment(KeyboardManager())
         .environment(DbStore(.empty()))
         .environment(LocalLLmService())

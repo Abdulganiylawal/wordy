@@ -21,7 +21,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        WordView()
+        WordView(localLLmService: localLLM)
             .environment(dbStore)
          
     }

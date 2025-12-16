@@ -19,13 +19,13 @@ import Foundation
 
 class MLXFolderManager {
     
-
+    
     private static let appGroupID = "group.com.lawalAbdulganiy.llm.models"
     
-
+    
     private static let folderName = "MLXModels"
     
-
+    
     public static var sharedFolderURL: URL {
         guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
             fatalError("Failed to access App Group container")
@@ -71,7 +71,7 @@ class LocalLLmService {
     public var defaultHubApi: HubApi = {
         HubApi(downloadBase: MLXFolderManager.sharedFolderURL)
     }()
-
+    
     let generateParameters = GenerateParameters(
         temperature: 0.25,
         topP: 0.85,
@@ -98,7 +98,7 @@ class LocalLLmService {
             ) { [weak self] progress in
                 guard let self else { return }
                 debugLog(
-                    "Downloading \(modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%"
+                    "Downloading \(model.name): \(Int(progress.fractionCompleted * 100))%"
                 )
                 self.downloadProgress = progress.fractionCompleted
             }
@@ -111,11 +111,18 @@ class LocalLLmService {
         }
     }
     
-    func input(word: String) async {
-        guard let modelContainer else { return }
+    @discardableResult
+    func input(word: String) async throws -> AIDictionaryModel {
+        guard let modelContainer else { throw NSError(
+            domain: "Invalid response",
+            code: 100,
+            userInfo: [
+                NSLocalizedDescriptionKey: "No content in response"
+            ]
+        ) }
         
         do {
-            updateLoading(status: .loading)
+            
             let result = try await modelContainer.perform { context in
                 
                 let prompt = UserInput(prompt: createPrompt(word, images: []))
@@ -150,11 +157,14 @@ class LocalLLmService {
                 output = result.output
             }
             debugLog("Result is \(output)")
-            updateLoading(status: .finished)
+            let model = try Utils.shared.decodeJSON(output, to: AIDictionaryModel.self)
+            return model
         } catch {
-            updateLoading(status: .failed)
+            
             debugLog("Error in input: \(error.localizedDescription)")
+            throw error
         }
+        
     }
     
     func switchModel(_ model: ModelConfiguration) async -> (Bool, Error?) {
@@ -177,34 +187,43 @@ class LocalLLmService {
     ) -> UserInput.Prompt {
         if images.isEmpty {
             return .text(
-                """
-                You are a dictionary assistant.
-                
-                Define the STANDARD English dictionary meaning of the word "\(prompt)".
+"""
+You are a strict JSON generator.
 
-                STRICT RULES:
-                - The word MUST NOT be used inside its own definition
-                - Do NOT invent verb forms if the word is not a verb
-                - Use the most common dictionary meaning only
-                - If the spelling is incorrect, silently correct it
-                - If the word is an adjective, return "adjective" as typeOfWord
-                
-                Your response MUST be a valid JSON object with EXACTLY the following fields:
-                
-                - "definition": string
-                - "typeOfWord": string (noun, verb, adjective, adverb, etc.)
-                - "synonyms": array of strings
-                - "antonyms": array of strings
-                - "example": array of strings (example sentences)
-                
-                Additional rules:
-                - "typeOfWord" must be one word (noun, verb, adjective, or adverb)
-                - No extra fields
-                - No markdown
-                - No explanations
-                - JSON only
-                """
+You MUST return a single valid JSON object.
+You MUST NOT return any text before or after the JSON.
+You MUST NOT use markdown.
+You MUST NOT explain anything.
+
+TASK:
+You are a dictionary assistant.
+
+Define the STANDARD English dictionary meaning of the word "\(prompt)".
+
+RULES:
+- The word MUST NOT appear inside its own definition
+- Do NOT invent verb forms if the word is not a verb
+- Use ONLY the most common dictionary meaning
+- If the spelling is incorrect, silently correct it
+- If the word is an adjective, return "adjective" as typeOfWord
+
+OUTPUT FORMAT (EXACT):
+{
+  "definition": string,
+  "typeOfWord": string,
+  "synonyms": [string],
+  "antonyms": [string],
+  "example": [string]
+}
+
+CONSTRAINTS:
+- typeOfWord must be ONE word only (noun, verb, adjective, adverb)
+- No extra keys
+- Arrays must not be empty
+- JSON ONLY
+"""
             )
+            
             
         } else {
             

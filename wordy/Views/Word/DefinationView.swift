@@ -19,7 +19,9 @@ struct DefinationView: View {
                 
                 Text(definition)
                     .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .medium)
-                    .padding(.horizontal, 20)
+
+                    .padding(.bottom,5)
+                    .multilineTextAlignment(.leading)
             }
         }
     }

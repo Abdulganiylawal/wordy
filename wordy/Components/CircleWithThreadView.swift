@@ -33,24 +33,20 @@ struct CircleWithThreadView: View {
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
-                Circle()
-                    .stroke(
-                        color1,
-                        lineWidth: 1.5
-                    )
+                
                 if isSF {
                     Image(systemName: iconOrEmoji)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: size * 0.5, height: size * 0.5)
-                        .foregroundStyle(sfSymbolColor ?? Color.primary)
+                        .frame(width: size, height: size )
+                        .foregroundStyle(color1)
                 } else {
                     Text(iconOrEmoji)
-                        .font(.system(size: size * 0.5))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        .font(.system(size: size ))
+                        
                 }
             }
-            .frame(width: size, height: size, alignment: .center)
+            .frame(width: size, height: size, alignment: .top)
             if showThread {
                 Rectangle()
                     .fill(

@@ -17,17 +17,20 @@ struct PhoneticView: View {
     @State private var audioPlayer: AVPlayer?
     @State private var isPlaying = false
     @State private var observer: NSObjectProtocol?
-    init( phonetics: [Phonetics], typeOfWord:String) {
+    @Binding private var showView:Bool
+    init( phonetics: [Phonetics], typeOfWord:String, showView: Binding<Bool>) {
         let phonetic = phonetics.compactMap { $0 }.first
         self.phonetic =  phonetic
         self.text = phonetic?.text ?? ""
+        _showView  = .constant(text.isEmpty)
         self.sourceUrl = phonetic?.audio ?? ""
         self.typeOfWord = typeOfWord
+        
     }
     
     var body: some View {
         if (!text.isEmpty) {
-            VStack(alignment: .leading,spacing: 5) {
+            VStack(alignment: .leading,spacing: 2) {
                 Text("Phonetics")
                     .customTextStyle(color: AppColors.textMute(colorScheme: colorScheme), size: 16, weight: .medium)
                 
@@ -49,7 +52,10 @@ struct PhoneticView: View {
                         .buttonStyle(BouncyButton())
                     }
                 }
-       
+                
+         
+                .multilineTextAlignment(.leading)
+                .padding(.bottom,5)
             }
             .onDisappear {
                 audioPlayer?.pause()

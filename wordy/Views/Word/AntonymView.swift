@@ -13,20 +13,23 @@ struct AntonymView: View {
     
     var body: some View {
         if !antonyms.isEmpty {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading,spacing: 5) {
                 Text("Antonyms")
                     .customTextStyle(color: AppColors.textMute(colorScheme: colorScheme), size: 16, weight: .medium)
-                
+                 
               
                     ForEach(antonyms, id: \.self) { antonym in
                         Text(antonym)
                             .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .medium)
-                            .padding(.horizontal, 20)
+                     
                             .padding(.vertical, 1)
+                            .multilineTextAlignment(.leading)
+                            
                           
                     }
                 
             }
+            .padding(.bottom,5)
         }
     }
 }

@@ -12,11 +12,19 @@ import SwiftUI
 @MainActor
 class WordStore {
     @ObservationIgnored
-    private var wordService = WordService()
+    private let wordService:WordService
+    
+    @ObservationIgnored
+    private let localLLmService:LocalLLmService
     var loading: Loading = .na
     var partOfSpeech: String = ""
     var words: MeaningModel?
     var searchWord: String = ""
+    
+    init(localLLmService:LocalLLmService) {
+        self.localLLmService = localLLmService
+        self.wordService = WordService(localLLMService: localLLmService)
+    }
 
 
     func getWordMeaning(_ word: String) async -> MeaningModel? {

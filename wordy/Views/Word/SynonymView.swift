@@ -21,12 +21,14 @@ struct SynonymView: View {
                     ForEach(synonyms, id: \.self) { synonym in
                         Text(synonym)
                             .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .medium)
-                            .padding(.horizontal, 20)
+               
                             .padding(.vertical, 1)
+                            .multilineTextAlignment(.leading)
                             
                     }
                 
             }
+            .padding(.bottom,5)
         }
     }
 }

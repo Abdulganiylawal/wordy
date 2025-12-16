@@ -22,7 +22,7 @@ struct BlurScrollTransitionModifier: ViewModifier {
             .scrollTransition() { view, phase in
                 view
                   
-                    .blur(radius: phase.isIdentity ? 0 : 15)
+                    .blur(radius: phase.isIdentity ? 0 : 5)
                 
             }
     }

@@ -73,7 +73,7 @@ extension ModelConfiguration: @retroactive Equatable {
             // iPhone 14 Pro optimized models
         case .phi_3_5_mini_instruct_4bit: return 2.5
         
-        case .gemma3n_E2B_it_lm_4bit: return 3
+        case .gemma3n_E2B_it_lm_4bit: return 2.6
         
         case .gemma3n_E4B_it_lm_4bit: return 3
             

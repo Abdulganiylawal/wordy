@@ -65,7 +65,7 @@ struct Wordpicker: View {
 }
 
 #Preview {
-    Wordpicker(wordStore: WordStore(), showNextView: .constant(false))
+    Wordpicker(wordStore: WordStore(localLLmService: LocalLLmService()), showNextView: .constant(false))
         .environment(DbStore(.shared))
 }
 

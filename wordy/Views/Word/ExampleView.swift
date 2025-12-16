@@ -21,8 +21,9 @@ struct ExampleView: View {
                     ForEach(examples, id: \.self) { example in
                         Text(example)
                             .customTextStyle(color: AppColors.textInverted(colorScheme: colorScheme), size: 18, weight: .medium)
-                            .padding(.horizontal, 20)
+                 
                             .padding(.vertical, 1)
+                            .multilineTextAlignment(.leading)
                             .applyBlurScrollTransition()
                     }
                 

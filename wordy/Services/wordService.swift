@@ -12,17 +12,12 @@ struct DictionaryEntry: Decodable {
     let word: String
 }
 
-class WordService {
+
+class Utils {
     
-    let openAIService: OpenAIService
-    
-    init() {
-        openAIService = AIProxy.openAIService(
-            partialKey: "v2|9451600a|fzgFdNMrWfvesQzD",
-            serviceURL: "https://api.aiproxy.com/ae48d3c5/1e46e778"
-        )
-    }
-    
+    static let shared = Utils()
+
+    private init() { }
     /// Decodes a JSON string to the specified Codable type
     /// - Parameters:
     ///   - jsonString: The JSON string to decode
@@ -45,6 +40,22 @@ class WordService {
         return try JSONDecoder().decode(type, from: jsonData)
     }
     
+}
+
+class WordService {
+    
+    private let openAIService: OpenAIService
+    private let localLLmService:LocalLLmService
+    
+    init(localLLMService:LocalLLmService) {
+        openAIService = AIProxy.openAIService(
+            partialKey: "v2|9451600a|fzgFdNMrWfvesQzD",
+            serviceURL: "https://api.aiproxy.com/ae48d3c5/1e46e778"
+        )
+        self.localLLmService = localLLMService
+    }
+    
+
     private func getWordsFromDictionary(_ word: String) async throws -> (
         [DictionaryModel]
     ) {
@@ -148,7 +159,7 @@ class WordService {
 //            debugLog("Raw response: \(jsonString)")
             
             
-            let dictionaryModel = try decodeJSON(jsonString, to: AIDictionaryModel.self)
+            let dictionaryModel = try Utils.shared.decodeJSON(jsonString, to: AIDictionaryModel.self)
             
             return dictionaryModel
         } catch AIProxyError.unsuccessfulRequest(
@@ -180,7 +191,7 @@ class WordService {
         AIDictionaryModel
     ) {
        async let firstResult =  getWordsFromDictionary(words)
-       async let secondResault =  getWordMeaningFromAi(_word: words)
+       async let secondResault = localLLmService.input(word: words)
        return try await (firstResult, secondResault)
     }
 }
