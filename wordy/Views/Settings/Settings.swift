@@ -21,6 +21,7 @@ struct SettingsView: View {
                         Label {
                             Text("Models")
                                 .fixedSize()
+                                .foregroundStyle(.primary)
                         } icon: {
                             Image(systemName: "arrow.down.circle")
                         }
@@ -33,6 +34,7 @@ struct SettingsView: View {
                         Label {
                             Text("Downloaded Models")
                                 .fixedSize()
+                                .foregroundStyle(.primary)
                         } icon: {
                             Image(systemName: "folder.fill")
                         }
@@ -46,6 +48,7 @@ struct SettingsView: View {
                         Label {
                             Text("Notification")
                                 .fixedSize()
+                                .foregroundStyle(.primary)
                         } icon: {
                             Image(systemName: "bell.fill")
                         }
