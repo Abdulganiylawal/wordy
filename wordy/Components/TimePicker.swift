@@ -41,7 +41,13 @@ struct TimePicker: View {
                 .padding(.horizontal, horizontalPadding)
                 .scrollTargetLayout()
             }
-            .overlay(selectionIndicator, alignment: .bottom)
+//            .scrollTargetBehavior(.paging)
+//            .overlay(alignment: .center) {
+//                VStack {
+//                    Spacer()
+//                    selectionIndicator
+//                }
+//            }
             .padding(.bottom,40)
             
             .scrollPosition(id: $scrollMinute, anchor: .center)
@@ -74,7 +80,7 @@ struct TimePicker: View {
         
         VStack(spacing: 6) {
             Capsule()
-                .fill(.secondary)
+                .fill(calculateColor(for: selectedMinutes, selectedMinute: minute))
                 .frame(
                     width: tickWidth,
                     height: calculateHeight(for: selectedMinutes, selectedMinute: minute)
@@ -122,6 +128,18 @@ struct TimePicker: View {
             }
         } else {
             return 5
+        }
+    }
+    
+    private func calculateColor(for minutes: [Int],selectedMinute: Int) -> Color {
+        if minutes.contains(selectedMinute) {
+            if selectedMinute == scrollMinute {
+                return .blue
+            }else {
+                return .gray.opacity(0.5)
+            }
+        } else {
+            return .gray.opacity(0.3)
         }
     }
     
